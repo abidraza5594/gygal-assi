@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Canvas Pixel Data Download</title>
+</head>
+<body>
+  <canvas id="myCanvas" width="16" height="34"></canvas>
+  <a id="downloadLink" href="#" download="pixel_data.txt">Download</a>
+
+  <script>
+    // Get the canvas element and its 2D rendering context
+    var canvas = document.getElementById("myCanvas");
+    var ctx = canvas.getContext("2d");
+
+    // Set the font properties
+    var fontSize = 16;
+    var fontFace = "Arial";
+    var fontColor = "red";
+
+    // Set the text to be displayed
+    var text = "A";
+
+    // Set the font style
+    ctx.font = fontSize + "px " + fontFace;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    // Calculate the coordinates to center the text
+    var x = canvas.width / 2;
+    var y = canvas.height / 2;
+
+    // Set the font color
+    ctx.fillStyle = fontColor;
+
+    // Draw the text on the canvas
+    ctx.fillText(text, x, y);
+
+    // Function to convert RGB color values to hex format
+    function rgbToHex(r, g, b) {
+      return "#" + ((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1);
+    }
+
+    // Function to handle the download button click
+    function handleDownload() {
+      // Get the pixel data from the canvas
+      var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+      var pixels = [];
+
+      // Iterate over the pixel data and convert it to hex format
+      for (var i = 0; i < imageData.length; i += 4) {
+        var r = imageData[i];
+        var g = imageData[i + 1];
+        var b = imageData[i + 2];
+        var hexColor = rgbToHex(r, g, b);
+        pixels.push(hexColor);
+      }
+
+      // Create a download link for the pixel data file
+      var downloadLink = document.getElementById("downloadLink");
+      downloadLink.href = "data:text/plain;charset=utf-8," + encodeURIComponent(pixels.join("\n"));
+    }
+
+    // Attach the click event handler to the download link
+    var downloadButton = document.getElementById("downloadLink");
+    downloadButton.addEventListener("click", handleDownload);
+  </script>
+</body>
+</html>
